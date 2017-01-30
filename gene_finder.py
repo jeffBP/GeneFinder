@@ -30,8 +30,9 @@ def get_complement(nucleotide):
     >>> get_complement('C')
     'G'
     """
-    # TODO: implement this
-    pass
+    nucArray = "ACGT"
+    reverseIndex = nucArray.find(nucleotide)
+    return nucArray[len(nucArray)-reverseIndex-1]
 
 
 def get_reverse_complement(dna):
@@ -45,9 +46,11 @@ def get_reverse_complement(dna):
     >>> get_reverse_complement("CCGCGTTCA")
     'TGAACGCGG'
     """
-    # TODO: implement this
-    pass
+    reverseComplement = ""
 
+    for i in range(len(dna)):
+        reverseComplement += get_complement(dna[i])
+    return reverseComplement[::-1]
 
 def rest_of_ORF(dna):
     """ Takes a DNA sequence that is assumed to begin with a start
@@ -62,8 +65,14 @@ def rest_of_ORF(dna):
     >>> rest_of_ORF("ATGAGATAGG")
     'ATGAGA'
     """
-    # TODO: implement this
-    pass
+    stopCodons = ['TAG', 'TAA', 'TGA']
+    for i in stopCodons:
+        for j in range(len(dna)//3):
+            jIndex = 3*j
+            if dna[jIndex] == i[0] and dna[jIndex+1] == i[1] and dna[jIndex+2] == i[2]:
+                return dna[:jIndex]
+
+    return dna
 
 
 def find_all_ORFs_oneframe(dna):
@@ -79,8 +88,17 @@ def find_all_ORFs_oneframe(dna):
     >>> find_all_ORFs_oneframe("ATGCATGAATGTAGATAGATGTGCCC")
     ['ATGCATGAATGTAGA', 'ATGTGCCC']
     """
-    # TODO: implement this
-    pass
+    orf = []
+    i = 0
+    while i < (len(dna)//3):
+            index = 3*i
+            currentCodon = [dna[index], dna[index+1], dna[index+2]]
+            if currentCodon[0] == 'A' and currentCodon[1] =='T' and currentCodon[2] == 'G':
+                foundOrf = rest_of_ORF(dna[index:])
+                orf.append(foundOrf)
+                i += len(foundOrf)//3
+            i += 1
+    return orf
 
 
 def find_all_ORFs(dna):
@@ -96,8 +114,12 @@ def find_all_ORFs(dna):
     >>> find_all_ORFs("ATGCATGAATGTAG")
     ['ATGCATGAATGTAG', 'ATGAATGTAG', 'ATG']
     """
-    # TODO: implement this
-    pass
+    orfs = []
+    for i in range(3):
+        res = find_all_ORFs_oneframe(dna[i:])
+        for i in res:
+            orfs.append(i)
+    return orfs
 
 
 def find_all_ORFs_both_strands(dna):
@@ -109,8 +131,17 @@ def find_all_ORFs_both_strands(dna):
     >>> find_all_ORFs_both_strands("ATGCGAATGTAGCATCAAA")
     ['ATGCGAATG', 'ATGCTACATTCGCAT']
     """
-    # TODO: implement this
-    pass
+    allOrfs = []
+    revComp = get_reverse_complement(dna)
+    orfsRev = find_all_ORFs(revComp)
+    orfsFor = find_all_ORFs(dna)
+
+    for i in orfsFor:
+        allOrfs.append(i)
+    for i in orfsRev:
+        allOrfs.append(i)
+
+    return allOrfs
 
 
 def longest_ORF(dna):
@@ -156,11 +187,21 @@ def gene_finder(dna):
     """ Returns the amino acid sequences that are likely coded by the specified dna
 
         dna: a DNA sequence
+
         returns: a list of all amino acid sequences coded by the sequence dna.
     """
     # TODO: implement this
     pass
 
+
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
+"""
+print(get_complement("T"))
+print(get_reverse_complement("AACCGGTT"))
+print(rest_of_ORF("ATGAGATAGG"))
+print(find_all_ORFs_oneframe("ATGCATGAATGTTAGATAGATGTGCCC"))
+print(find_all_ORFs("ATGCATGAATGTAG"))
+print(find_all_ORFs_both_strands("ATGCGAATGTAGCATCAAA"))
+"""
