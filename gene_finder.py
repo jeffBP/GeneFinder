@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
-"""
-YOUR HEADER COMMENT HERE
 
-@author: YOUR NAME HERE
+"""
+This code was written to take in a sequence of DNA nucleotides, and return
+a list of proteins created by those nucleotides and their complements.
+
+@author: Jeff Pflueger
 
 """
 
